@@ -1,17 +1,18 @@
 # [ECCV' 24 Oral] CLIFF: Continual Latent Diffusion for Open-Vocabulary Object Detection
 
-### [[Poster]](./assets/poster.png) [[Video Presentation]](https://www.youtube.com/watch?v=jvb9VP-l2rY) 
+### [[Paper]](https://www.ecva.net/papers/eccv_2024/papers_ECCV/html/7221_ECCV_2024_paper.php) [[Poster]](./assets/poster.png) [[Video Presentation]](https://www.youtube.com/watch?v=jvb9VP-l2rY)  
 
 📌 This is an official PyTorch implementation of CLIFF: Continual Latent Diffusion for Open-Vocabulary Object Detection
 
-> [**CLIFF: Continual Latent Diffusion for Open-Vocabulary Object Detection**]()<br>
+> [**CLIFF: Continual Latent Diffusion for Open-Vocabulary Object Detection**](https://www.ecva.net/papers/eccv_2024/papers_ECCV/html/7221_ECCV_2024_paper.php)<br>
 > [Wuyang Li<sup>1</sup>](https://wymancv.github.io/wuyang.github.io/), [Xinyu Liu<sup>1</sup>](https://xinyuliu-jeffrey.github.io/), [Jiayi Ma<sup>2</sup>](https://scholar.google.com/citations?user=73trMQkAAAAJ&hl=en), [Yixuan Yuan<sup>1</sup>](http://www.ee.cuhk.edu.hk/~yxyuan/)<br><sup>1</sup> The Chinese Univerisity of Hong Kong; <sup>2</sup> Wuhan University
 
 <div align="center">
     <img width="100%" alt="CLIFF overview" src="assets/cliff_main.png"/>
 </div>
 
-Contact: wymanbest@outlook.com
+Contact: [wymanbest@outlook.com](mailto:wymanbest@outlook.com)
+
 ## 📢 News
 
 - [09-26-2024] Code is released
@@ -20,7 +21,7 @@ Contact: wymanbest@outlook.com
 
 ## ✨ Highlight
 
-CLIFF is a probabilistic pipeline modeling the distribution transfer among the object, CLIP image, and text subspaces with continual diffusion. Our contributions can be divided into the following aspects:
+CLIFF is a probabilistic pipeline modeling the distribution transition among the object, CLIP image, and text subspaces with continual diffusion. Our contributions can be divided into the following aspects:
 
 - Leveraging the diffusion process to model the distribution transfer from the object to the CLIP image and text continually.
 - A simple and lightweight latent diffuser with an MLP architecture deployed in the object and CLIP embedding space.
@@ -66,7 +67,6 @@ We release a MVP version of CLIFF for Cifar-10 classification in the folder [cif
 |----------|----------|----------|
 | ResNet-18|  [93.02%](https://github.com/kuangliu/pytorch-cifar) |   95.00% |
 
-
 To train and evaluate the MVP code, you can follow the following steps.
 
 ```bash
@@ -109,6 +109,7 @@ It's worth noting that there may be around a 1.0 $\text{mAP}_n$ (IoU@50) differe
     <td>51.51</td>
   </tr>
 </table>
+
 To evaluate the model with 4 GPUs, use the following commands. You can change `CUDA_VISIBLE_DEVICES` and `num-gpus` to use a different number of GPUs:
 
 ```python
@@ -132,7 +133,7 @@ CUDA_VISIBLE_DEVICES=1,2 python train_net_diffusion.py \
 
 ## 🏋️ Train: Detection with CLIFF
 
-Since I recently changed the working position, I no longer have access to GPU resources. We are currently double-checking the training process on other machines after cleaning up the code. We will release the training code as soon as possible. In the meantime, we have provided the unverified script for the `train.sh`.
+Since I recently changed my working position, I no longer have access to GPU resources. We are currently double-checking the training process on other machines after cleaning up the code. We will release the training code as soon as possible. Nonetheless, we have provided the unverified script for the `train.sh`.
 
 
 ## 🙏 Acknowledgement
@@ -144,8 +145,8 @@ Greatly appreciate the tremendous effort for the following projects!
 
 
 ## 📋 TODO List
-- [√] Release code for CLIFF
-- [√] Release the MVP version for CLIFF
+- [X] Release code for CLIFF
+- [X] Release the MVP version for CLIFF
 - [ ] Release the training script
 - [ ] Release the code and model for LVIS setting
 
