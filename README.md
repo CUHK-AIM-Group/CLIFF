@@ -61,13 +61,13 @@ Then, change the dataset root `_root=$Your dataset root` in `ovd/datasets/coco_z
 
 ## 🚀 Minimum Viable Product Version: Classification with CLIFF
 
-We release a MVP version of CLIFF for Cifar-10 classification in the folder [cifar10](./cifar10/), which is much more user-friendly and cute. The general idea is to generate CLIP text embedding with the same diffusor used in CLIFF, and measure the Euclidean distance between the generated embedding with CLIP embedding to make the class decision. You can directly transfer this simple verison to your project. The code refernce is https://github.com/kuangliu/pytorch-cifar.
+We release an MVP version of CLIFF for Cifar-10 classification in the folder [cifar10](./cifar10/), which is much more user-friendly and cute. The general idea is to generate CLIP text embedding with the same diffusor used in CLIFF and measure the Euclidean distance between the generated embedding and CLIP embedding to make the class decision. You can directly transfer this simple version to your project. The code reference is https://github.com/kuangliu/pytorch-cifar.
 
 | Feature Extractor| Baseline | Ours |
 |----------|----------|----------|
 | ResNet-18|  [93.02%](https://github.com/kuangliu/pytorch-cifar) |   95.00% |
 
-To train and evaluate the MVP code, you can follow the following steps.
+You can follow the following steps to train and evaluate the MVP code.
 
 ```bash
 cd cifar10
@@ -79,7 +79,7 @@ python train_net_diffusion.py \
 
 ## 📊 Evaluation: Detection with CLIFF
 
-It's worth noting that there may be around a 1.0 $\text{mAP}_n$ (IoU@50) difference in each evluation using different random seeds. This is because, in revserse diffusion, the noise is random sampled and slightly affects class decision-making. This phenomenon is similar in generative tasks, where using different seeds results in different outputs. The model link for OVD COCO can be fould below,
+It's worth noting that there may be around a 1.0 $\text{mAP}_n$ (IoU@50) difference in each evaluation using different random seeds. This is because, in reverse diffusion, the noise is randomly sampled and slightly affects class decision-making. This phenomenon is similar in generative tasks, where using different seeds results in different outputs. The model link for OVD COCO can be found below,
 
 <table>
   <tr>
@@ -153,7 +153,7 @@ Greatly appreciate the tremendous effort for the following projects!
 
 ##  📚Citeation
 
-If you think our work is helpful for your project, I would greatly apprecitate it if you can consdier citing our work
+If you think our work is helpful for your project, I would greatly appreciate it if you could consdier citing our work
 
 ```bibtex
 @inproceedings{Li2024cliff,
