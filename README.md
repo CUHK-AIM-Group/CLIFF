@@ -133,7 +133,7 @@ CUDA_VISIBLE_DEVICES=1,2 python train_net_diffusion.py \
 
 ## 🏋️ Train: Detection with CLIFF
 
-Since I recently changed my working position, I no longer have access to GPU resources. We are currently double-checking the training process on other machines after cleaning up the code. We will release the training code as soon as possible. Nonetheless, we have provided the unverified script for the `train.sh`.
+Since I recently changed my working position, I no longer have access to the original GPU resources. We are currently double-checking the training process on other machines after cleaning up the code. We will release the training code as soon as possible. Nonetheless, we have provided the unverified script for the `train.sh`.
 
 
 ## 🙏 Acknowledgement
@@ -147,13 +147,13 @@ Greatly appreciate the tremendous effort for the following projects!
 ## 📋 TODO List
 - [X] Release code for CLIFF
 - [X] Release the MVP version for CLIFF
-- [ ] Release the training script
+- [ ] Release the verified training scripts
 - [ ] Release the code and model for LVIS setting
 
 
 ##  📚Citeation
 
-If you think our work is helpful for your project, I would greatly apprecitate it if you can consdier  citing our work
+If you think our work is helpful for your project, I would greatly apprecitate it if you can consdier citing our work
 
 ```bibtex
 @inproceedings{Li2024cliff,
