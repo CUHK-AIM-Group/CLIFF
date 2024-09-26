@@ -1,0 +1,36 @@
+_BASE_: "CLIFF_COCO_RCNN-C4_obj2txt_stage1.yaml"
+OUTPUT_DIR: output/cliff/final
+DDPM:
+  NUM_DDPM_SETPS: 10
+  NUM_STEPS_REGION_TO_TEXT: 10
+  NUM_STEPS_REGION_TO_IMAGE: 3
+  NORM_DDPM_SAMPLING: 'clamp'
+  NUM_BOTTLENECK_LAYERS: 2
+  HIDDEN_DIM: 1024
+  WITH_RECONSTRUCTION: True
+  WITH_REGION_TO_IMAGE: True
+  KL_LOSS_WEIGHT: 10.0
+  LOSS_WEIGHT_REGION_TO_IMAGE: 75.0
+  WITH_COND_NOISE: True
+  WITH_OVER_SAMPLING: False
+MODEL:
+  WEIGHTS: "/data/wyli/code/CLIFF/output/cliff/stage2/model_final.pth"
+  RKD_FEAT_PATH: /data/wyli/data/coco/MAVL_proposals/coco_props/classagnostic_distilfeats # change to your path
+  PIS_PROP_PATH: /data/wyli/data/coco/MAVL_proposals/coco_props/class_specific # change to your path
+  DISTILLATION: True
+  NUM_DISTIL_PROP: 5
+  ROI_BOX_HEAD:
+    USE_DDPM: True
+INPUT:
+  MIN_SIZE_TRAIN_SAMPLING: choice
+DATALOADER:
+  DATASET_MAX_SIZES: [1888, 1600] 
+  DATASET_MIN_SIZES: [[128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448, 480, 512, 544, 576, 608, 640, 672, 704, 736, 768, 800, 832, 864, 896, 928, 960, 992, 1024, 1056, 1088, 1120, 1152, 1184, 1216, 1248, 1280], [400, 400]]
+SOLVER:
+  BASE_LR: 0.002
+  STEPS: (60000, 80000)
+  MAX_ITER: 120000
+  CHECKPOINT_PERIOD: 10000
+SEED: 999
+TEST:
+  EVAL_PERIOD: 10000

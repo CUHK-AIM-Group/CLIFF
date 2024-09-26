@@ -1,0 +1,6 @@
+opencv-python
+scikit-learn
+lvis
+Pillow==8.4.0
+numpy==1.25.2
+setuptools==59.5.0
