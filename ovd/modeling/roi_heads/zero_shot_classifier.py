@@ -7,6 +7,7 @@ from detectron2.layers import ShapeSpec
 from .diffusion_lib import DiffusionMLP, GaussianDiffusion, VaeHiddenLayer
 from .gradient_scalar_layer import GradientScalarLayer
 
+
 class ZeroShotClassifier(nn.Module):
     @configurable
     def __init__(
@@ -64,9 +65,9 @@ class ZeroShotClassifier(nn.Module):
         if zs_weight_path.split('.')[-1] == 'pt':
             print('use prompt distribution')
             self.with_prompt_dist = True
-            zs_weight = torch.load(zs_weight_path).permute(0,2, 1).contiguous().cuda().float()  # 63 x 512 x C
+            zs_weight = torch.load(zs_weight_path).permute(0, 2, 1).contiguous().cuda().float()  # 63 x 512 x C
             zs_weight = torch.cat(
-                [zs_weight, zs_weight.new_zeros((zs_weight.size(0),zs_weight.size(1), 1))], # 63 x 512 x C + 1
+                [zs_weight, zs_weight.new_zeros((zs_weight.size(0), zs_weight.size(1), 1))],  # 63 x 512 x C + 1
                 dim=-1)  # D x (C + 1)
             zs_weight = F.normalize(zs_weight, p=2, dim=1)
             self.num_prompts, self.dim, self.num_classes = zs_weight.size()
@@ -97,11 +98,12 @@ class ZeroShotClassifier(nn.Module):
         self.num_steps_region_to_image = num_steps_region_to_image
 
         if use_ddpm:
-            self.ddpm_module = DiffusionMLP(zs_weight_dim, hidden_dim, zs_weight_dim, num_bottleneck_layers, num_steps_region_to_text)
+            self.ddpm_module = DiffusionMLP(zs_weight_dim, hidden_dim, zs_weight_dim, num_bottleneck_layers,
+                                            num_steps_region_to_text)
             self.diffuser = GaussianDiffusion(timesteps=num_steps_region_to_text, beta_schedule='cosine')
 
             if self.refine_cond_type == 'att' and self.with_region_to_image:
-                self.proj = nn.Linear(512,512)
+                self.proj = nn.Linear(512, 512)
 
     @classmethod
     def from_config(cls, cfg, input_shape):
@@ -136,19 +138,20 @@ class ZeroShotClassifier(nn.Module):
             return zs_weight
         else:
             if self.training:
-                indx1 = torch.randint(0, self.num_prompts, (self.num_classes,))    
+                indx1 = torch.randint(0, self.num_prompts, (self.num_classes,))
                 indx2 = torch.arange(self.num_classes)
-                zs_weight = zs_weight[indx1, :, indx2].t() # num_classes+1, 512 -> 512, num_classes+1
+                zs_weight = zs_weight[indx1, :, indx2].t()  # num_classes+1, 512 -> 512, num_classes+1
                 return zs_weight
             else:
                 zs_weight = zs_weight.mean(0)
                 return zs_weight
+
     def refine_cond(self, x_obj, x_img):
 
         if self.refine_cond_type == 'att':
             roi_cond = F.sigmoid(self.proj(x_img)) * x_obj
         elif self.refine_cond_type == 'add':
-            roi_cond = 0.5 * (x_img +  x_obj)
+            roi_cond = 0.5 * (x_img + x_obj)
         elif self.refine_cond_type == 'obj':
             roi_cond = x_obj
         elif self.refine_cond_type == 'img':
@@ -157,46 +160,71 @@ class ZeroShotClassifier(nn.Module):
             raise ValueError
         return roi_cond
 
-    def forward(self, x, classifier=None):
+    def forward(self, x, gt_categories, classifier=None):
         """
         Inputs:
             x: B x D'
             classifier_info: (C', C' x D)
         """
-        x = self.linear(x) # num_rois, D
+        x = self.linear(x)  # num_rois, D
         zs_weight = self.zs_weight  # D C
         zs_weight = self.sampling_prompt(zs_weight)
-        mu, logvar = self.vae_hidden_layer(x) if self.with_cond_noise else (None,None) 
+        sims = self.cal_sim(x, gt_categories, zs_weight)
+        print(sims)
+        mu, logvar = self.vae_hidden_layer(x) if self.with_cond_noise else (None, None)
 
-        if self.training: 
+        if self.training:
             noise = self.vae_hidden_layer.reparameterize(mu, logvar) if self.with_cond_noise else None
             middle_noise = noise if self.with_middle_cond_noise else None
             if self.with_region_to_image:
-                img_embed = self.diffuser.part_sample(self.ddpm_module, x, noise=noise, num_setps=self.num_steps_region_to_image,middle_noise=middle_noise)        
+                img_embed = self.diffuser.part_sample(self.ddpm_module, x, noise=noise,
+                                                      num_setps=self.num_steps_region_to_image,
+                                                      middle_noise=middle_noise)
                 roi_cond = self.refine_cond(x, img_embed)
             else:
                 roi_cond = x
-            x = self.diffuser.sample(self.ddpm_module,  roi_cond, noise=noise, middle_noise=middle_noise) 
+            x = self.diffuser.sample(self.ddpm_module, roi_cond, noise=noise, middle_noise=middle_noise)
         else:
             # noise = self.vae_hidden_layer.reparameterize(mu, logvar) if self.with_cond_noise else None
-            noise = self.vae_hidden_layer.reparameterize(mu, logvar, deterministic=True) if self.with_cond_noise else None
+            noise = self.vae_hidden_layer.reparameterize(mu, logvar,
+                                                         deterministic=True) if self.with_cond_noise else None
             middle_noise = noise if self.with_middle_cond_noise else None
 
             if self.with_region_to_image:
-                img_embed = self.diffuser.part_sample(self.ddpm_module, x, noise=noise, num_setps=self.num_steps_region_to_image, middle_noise=middle_noise)
+                img_embed = self.diffuser.part_sample(self.ddpm_module, x, noise=noise,
+                                                      num_setps=self.num_steps_region_to_image,
+                                                      middle_noise=middle_noise)
                 roi_cond = self.refine_cond(x, img_embed)
             else:
                 roi_cond = x
-            x = self.diffuser.sample(self.ddpm_module,  roi_cond, noise=noise, middle_noise=middle_noise) 
+            x = self.diffuser.sample(self.ddpm_module, roi_cond, noise=noise, middle_noise=middle_noise)
 
         if self.norm_weight:
             x = self.norm_temperature * F.normalize(x, p=2, dim=1)
-            
+
         x = torch.mm(x, zs_weight)
 
         if self.use_bias:
             x = x + self.cls_bias
         return x
+
+    def cal_sim(self, x, gt_categories, zs_weight):
+        # 将 gt_categories 转换为 tensor，如果不是的话
+        if not torch.is_tensor(gt_categories):
+            gt_categories = torch.tensor(gt_categories)
+
+        # 确保 gt_categories 是一维张量
+        if gt_categories.dim() == 0:
+            gt_categories = gt_categories.unsqueeze(0)
+        # 获取对应的文本嵌入
+        # gt_categories 是 1-228，需要减1转换为索引0-227
+        selected_text_embeddings = zs_weight[:, gt_categories - 1]  # [512, batch_size]
+        selected_text_embeddings = selected_text_embeddings.transpose(0, 1)  # [batch_size, 512]
+
+        # 计算余弦相似度
+        cosine_similarity = F.cosine_similarity(x, selected_text_embeddings, dim=1)
+
+        return cosine_similarity
 
     def obj_to_txt_diff(self, region_feats, label, only_fg=False):
         '''
@@ -211,15 +239,16 @@ class ZeroShotClassifier(nn.Module):
             mu, logvar = self.vae_hidden_layer(x)
             loss_kl = self.vae_hidden_layer.kld_loss(mu, logvar)
             noise = self.vae_hidden_layer.reparameterize(mu, logvar)
-            middle_noise = noise if self.with_middle_cond_noise else None   
-            loss_dict.update({'kl_loss': loss_kl}) 
+            middle_noise = noise if self.with_middle_cond_noise else None
+            loss_dict.update({'kl_loss': loss_kl})
         else:
             noise = None
             middle_noise = None
 
         x_0 = zs_weight[label]
         if self.with_region_to_image:
-            img_embed = self.diffuser.part_sample(self.ddpm_module, x, noise=noise,middle_noise=middle_noise, num_setps=self.num_steps_region_to_image)
+            img_embed = self.diffuser.part_sample(self.ddpm_module, x, noise=noise, middle_noise=middle_noise,
+                                                  num_setps=self.num_steps_region_to_image)
             roi_cond = self.refine_cond(x, img_embed)
         else:
             roi_cond = x
@@ -230,26 +259,24 @@ class ZeroShotClassifier(nn.Module):
                 x_0, roi_cond,
                 noise=None,
                 cond_noise=noise,
-                 use_l1=self.rec_loss_l1)
+                use_l1=self.rec_loss_l1)
         elif self.with_over_sampling:
             loss_rec = self.diffuser.ddpm_forward_oversample(
                 self.ddpm_module,
-                x_0, 
-                roi_cond, 
-                noise=noise, 
-                )
+                x_0,
+                roi_cond,
+                noise=noise,
+            )
         else:
             loss_rec = self.diffuser.ddpm_forward(
                 self.ddpm_module,
-                x_0, 
-                roi_cond, 
-                noise=noise, 
+                x_0,
+                roi_cond,
+                noise=noise,
                 use_l1=self.rec_loss_l1)
         loss_dict.update({'obj_to_txt_gen_loss': loss_rec})
 
-
         return loss_dict
-
 
     def obj_to_img_diff(self, region_feats, clip_img_embed, oversampling=False):
         '''
@@ -257,21 +284,23 @@ class ZeroShotClassifier(nn.Module):
         gerneration conditon: region_feats
         gerneration target: clip_img_embed
         '''
-        x = self.linear(region_feats)    
+        x = self.linear(region_feats)
         clip_img_embed = F.normalize(clip_img_embed, p=2, dim=1)
         if self.with_cond_noise:
             mu, logvar = self.vae_hidden_layer(x)
             noise = self.vae_hidden_layer.reparameterize(mu, logvar)
-            middle_noise = noise if self.with_middle_cond_noise else None    
+            middle_noise = noise if self.with_middle_cond_noise else None
         else:
             noise = None
             loss_kl = None
-            middle_noise= None
-        x = self.diffuser.part_sample(self.ddpm_module, x, noise=noise, middle_noise=middle_noise, num_setps=self.num_steps_region_to_image)
+            middle_noise = None
+        x = self.diffuser.part_sample(self.ddpm_module, x, noise=noise, middle_noise=middle_noise,
+                                      num_setps=self.num_steps_region_to_image)
         if self.norm_weight:
-            x =  F.normalize(x, p=2, dim=1)
-        loss_cons =  F.l1_loss(x, clip_img_embed)
+            x = F.normalize(x, p=2, dim=1)
+        loss_cons = F.l1_loss(x, clip_img_embed)
         return loss_cons
+
 
 class WeightTransferZeroShotClassifier(nn.Module):
     @configurable
@@ -301,7 +330,8 @@ class WeightTransferZeroShotClassifier(nn.Module):
         self.use_ddpm = use_ddpm
         self.norm_ddpm_sampling = norm_ddpm_sampling
         if use_ddpm:
-            self.ddpm_module = DiffusionMLP(zs_weight_dim, hidden_dim, zs_weight_dim, num_bottleneck_layers, num_steps_region_to_text)
+            self.ddpm_module = DiffusionMLP(zs_weight_dim, hidden_dim, zs_weight_dim, num_bottleneck_layers,
+                                            num_steps_region_to_text)
             self.diffuser = GaussianDiffusion(timesteps=num_steps_region_to_text, beta_schedule='cosine')
 
         self.use_bias = use_bias < 0
@@ -361,7 +391,7 @@ class WeightTransferZeroShotClassifier(nn.Module):
 
     def _forward_middle(self, x):
         # Compute the weights through transfer function
-        t = self.fc1(self.linear.weight) # run2
+        t = self.fc1(self.linear.weight)  # run2
         t_act = self.relu(t)
         transfer_weights = self.fc2(t_act)
         # Pass though linear layer after weight transfer
@@ -381,8 +411,7 @@ class WeightTransferZeroShotClassifier(nn.Module):
         x = self._forward_middle(x)
 
         if self.use_ddpm:
-            x = self.diffuser.sample(self.ddpm_module, x, clip_denoised=self.norm_ddpm_sampling) # clamp
-                    
+            x = self.diffuser.sample(self.ddpm_module, x, clip_denoised=self.norm_ddpm_sampling)  # clamp
 
         if classifier is not None:
             zs_weight = classifier.permute(1, 0).contiguous()  # D x C'

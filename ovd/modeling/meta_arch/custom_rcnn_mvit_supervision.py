@@ -7,7 +7,7 @@ from detectron2.modeling.meta_arch.build import META_ARCH_REGISTRY
 from detectron2.modeling.meta_arch.rcnn import GeneralizedRCNN
 from torch.cuda.amp import autocast
 import numpy as np
-
+from ovd.datasets.coco_gt_instances import get_coco_instances
 
 @META_ARCH_REGISTRY.register()
 class CustomRCNNMViT(GeneralizedRCNN):
@@ -54,7 +54,9 @@ class CustomRCNNMViT(GeneralizedRCNN):
 
         images = self.preprocess_image(batched_inputs)
         features = self.backbone(images.tensor)
-        proposals, _ = self.proposal_generator(images, features, None)
+        # proposals, _ = self.proposal_generator(images, features, None)
+        image_ids = [item["image_id"] for item in batched_inputs]
+        proposals = get_coco_instances(image_ids, "/22liushoulong/datasets/ZSFooD2/annotations/instances_val2017.json")
         results, _ = self.roi_heads(images, (features, None), proposals)
         if do_postprocess:
             assert not torch.jit.is_scripting(), \

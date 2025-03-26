@@ -2,6 +2,7 @@ import json
 import torch
 from detectron2.structures import Boxes, Instances
 from typing import List
+import numpy as np
 
 
 def get_coco_instances(image_ids: List[int], json_path: str) -> List[Instances]:
@@ -67,24 +68,3 @@ def get_coco_instances(image_ids: List[int], json_path: str) -> List[Instances]:
         instances_list.append(instances)
 
     return instances_list
-
-
-# 示例用法
-if __name__ == "__main__":
-    # 示例参数
-    image_id = [229, ]  # COCO val2017 中的一个示例 ID
-    json_path = "/22liushoulong/datasets/ZSFooD2/annotations/instances_val2017.json"  # 请替换为实际路径
-
-    # 调用函数
-    instances = get_coco_instances(image_id, json_path)
-
-    # 打印结果，模仿指定格式
-    print(f"Instances(")
-    print(f"    num_instances={len(instances)},")
-    print(f"    image_height={instances.image_size[0]},")
-    print(f"    image_width={instances.image_size[1]},")
-    print(f"    fields=[")
-    print(f"        proposal_boxes: Boxes(tensor({instances.proposal_boxes.tensor}, device='cuda:0')),")
-    print(f"        objectness_logits: tensor({instances.objectness_logits}, device='cuda:0')")
-    print(f"    ]")
-    print(f")")

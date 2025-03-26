@@ -335,9 +335,9 @@ MODEL:
     NUM_CLASSES: 54
   TEST_CLASSIFIERS: []
   TEST_NUM_CLASSES: []
-  WEIGHTS: detectron2://ImageNetPretrained/MSRA/R-50.pkl
+  WEIGHTS: /22liushoulong/projects/CLIFF/output/cliff/stage2-out/model_0119999.pth
 OUTPUT_DIR: output/cliff/stage1
-SEED: 0
+SEED: 999
 SOLVER:
   AMP:
     ENABLED: false

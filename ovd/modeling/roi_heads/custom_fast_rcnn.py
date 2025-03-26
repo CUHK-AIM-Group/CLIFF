@@ -124,7 +124,7 @@ class CustomFastRCNNOutputLayers(FastRCNNOutputLayers):
     #     r2t_loss = self.cls_score.obj_to_txt_diff(region_feats, gt_classes)
 
     #     return r2t_loss
-    
+
     def losses(self, predictions, proposals, distil_features, use_advanced_loss=True):
         """
         enable advanced loss
@@ -147,9 +147,9 @@ class CustomFastRCNNOutputLayers(FastRCNNOutputLayers):
 
         obj_to_txt_dis_loss = self.sigmoid_cross_entropy_loss(scores, gt_classes)
         box_reg_loss = self.box_reg_loss(
-                    proposal_boxes, gt_boxes, proposal_deltas, gt_classes,
-                    num_classes=num_classes)
-        
+            proposal_boxes, gt_boxes, proposal_deltas, gt_classes,
+            num_classes=num_classes)
+
         loss_dict.update({
             "obj_to_txt_dis_loss": obj_to_txt_dis_loss,
             "box_reg_loss": box_reg_loss
@@ -157,14 +157,14 @@ class CustomFastRCNNOutputLayers(FastRCNNOutputLayers):
         if distil_features is not None:
             image_features, clip_features = distil_features
             if self.with_region_to_image:
-                obj_to_img_loss =  self.loss_weight_region_to_image * self.cls_score.obj_to_img_diff(image_features, clip_features)
+                obj_to_img_loss = self.loss_weight_region_to_image * self.cls_score.obj_to_img_diff(image_features,
+                                                                                                    clip_features)
             else:
                 obj_to_img_loss = self.distil_l1_loss(image_features, clip_features)
             loss_dict.update({
                 "obj_to_img_loss": obj_to_img_loss
             })
         return loss_dict
-    
 
     # Point-wise embedding matching loss (L1)
     def distil_l1_loss(self, image_features, clip_features):
@@ -317,7 +317,8 @@ class CustomFastRCNNOutputLayers(FastRCNNOutputLayers):
         if distil_features is not None:
             obj_embed, clip_img_embed = distil_features
             if self.with_region_to_image:
-                obj_to_img_loss = self.loss_weight_region_to_image * self.cls_score.obj_to_img_diff(obj_embed, clip_img_embed)
+                obj_to_img_loss = self.loss_weight_region_to_image * self.cls_score.obj_to_img_diff(obj_embed,
+                                                                                                    clip_img_embed)
             else:
                 obj_to_img_loss = self.distil_l1_loss(obj_embed, clip_img_embed)
             loss_dict.update({'obj_to_img_loss': obj_to_img_loss})
@@ -333,10 +334,10 @@ class CustomFastRCNNOutputLayers(FastRCNNOutputLayers):
 
         return loss_dict
 
-    def forward(self, x):
+    def forward(self, x, proposals):
         x = torch.flatten(x, start_dim=1)
         scores = []
-        cls_scores = self.cls_score(x)
+        cls_scores = self.cls_score(x, gt_categories=proposals[0].get_fields()["gt_categories"])
         scores.append(cls_scores)
         scores = torch.cat(scores, dim=1)
         proposal_deltas = self.bbox_pred(x)

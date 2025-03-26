@@ -5,6 +5,8 @@ from detectron2.modeling.roi_heads.roi_heads import ROI_HEADS_REGISTRY, Res5ROIH
 from .custom_fast_rcnn import CustomFastRCNNOutputLayers
 from detectron2.layers import ShapeSpec, cat, nonzero_tuple
 import torch
+
+
 @ROI_HEADS_REGISTRY.register()
 class CustomRes5ROIHeads(Res5ROIHeads):
     @configurable
@@ -40,12 +42,12 @@ class CustomRes5ROIHeads(Res5ROIHeads):
 
         proposal_boxes = [x.proposal_boxes for x in proposals]
         box_features = self._shared_roi_transform([features[f] for f in self.in_features], proposal_boxes)
-        predictions = self.box_predictor(box_features.mean(dim=[2, 3])) # CustomFastRCNNOutputLayers
+        predictions = self.box_predictor(box_features.mean(dim=[2, 3]), proposals)  # CustomFastRCNNOutputLayers
 
         if self.training and distill_clip_features is not None:
 
             clip_img_proposals, clip_img_embed = distill_clip_features
-            obj_embed = self._shared_roi_transform([features[f] for f in self.in_features], clip_img_proposals) 
+            obj_embed = self._shared_roi_transform([features[f] for f in self.in_features], clip_img_proposals)
             obj_embed = obj_embed.mean(dim=[2, 3])
 
             distill_features = (obj_embed, clip_img_embed)
@@ -53,37 +55,38 @@ class CustomRes5ROIHeads(Res5ROIHeads):
             distill_features = None
 
         if self.training:
-            loss_dict ={}
+            loss_dict = {}
             del features
-            if ann_type != 'box': # imgage-level supervisions
+            if ann_type != 'box':  # imgage-level supervisions
                 image_labels = [x._pos_category_ids for x in targets]
                 losses = self.box_predictor.image_label_losses(
                     predictions, proposals, distill_features, image_labels)
-            
+
                 loss_dict.update(losses)
                 loss_dict.update({
                     'obj_to_txt_gen_loss': predictions[0].new_zeros([1])[0],
-                    
+
                 })
                 if self.with_cond_noise:
                     loss_dict['kl_loss'] = predictions[0].new_zeros([1])[0]
 
-            else: # instance-level supervisions
+            else:  # instance-level supervisions
                 # detector loss + obj_to_img_loss
                 losses = self.box_predictor.losses(
                     (predictions[0], predictions[1]), proposals, distill_features)
-                
+
                 loss_dict.update(losses)
-                
+
                 # obj_to_txt_gen_loss
                 if self.with_ddpm_reconstruction:
                     gt_classes = (
-                                cat([p.gt_classes for p in proposals], dim=0) if len(proposals) else torch.empty(0)
-                            )                   
-                    loss_obj_to_txt = self.box_predictor.cls_score.obj_to_txt_diff(box_features.mean(dim=[2, 3]), gt_classes)
-   
+                        cat([p.gt_classes for p in proposals], dim=0) if len(proposals) else torch.empty(0)
+                    )
+                    loss_obj_to_txt = self.box_predictor.cls_score.obj_to_txt_diff(box_features.mean(dim=[2, 3]),
+                                                                                   gt_classes)
+
                     loss_dict.update(loss_obj_to_txt)
-    
+
                 if self.with_image_labels:
                     assert 'pms_loss' not in losses
                     loss_dict['pms_loss'] = predictions[0].new_zeros([1])[0]
