@@ -20,13 +20,14 @@ MODEL:
   RESNETS:
     DEPTH: 50
   ROI_BOX_HEAD:
+    ZEROSHOT_WEIGHT_DIM: 512
     USE_DDPM: True
     CLS_AGNOSTIC_BBOX_REG: True
     USE_SIGMOID_CE: True
     USE_ZEROSHOT_CLS: True
     ZEROSHOT_WEIGHT_PATH: 'datasets/zeroshot_weights/coco_clip_a+photo+cname.npy'
     IGNORE_ZERO_CATS: True
-    CAT_FREQ_PATH: '/data/wyli/data/coco/zero-shot/instances_train2017_seen_2_oriorder_cat_info.json' # change to your path
+    CAT_FREQ_PATH: '/22liushoulong/datasets/ZSFooD2/zero-shot/instances_train2017_seen_2_oriorder_cat_info.json' # change to your path
 DATASETS:
   TRAIN: ("coco_zeroshot_train_oriorder",)
   TEST: ("coco_generalized_zeroshot_val",)

@@ -14,7 +14,7 @@ DDPM:
 MODEL:
   # WEIGHTS: "/data/wyli/code/CLIFF/coco_ovd_base.pth"
   META_ARCHITECTURE: "CustomRCNNMViT"
-  PIS_PROP_PATH: /data/wyli/data/coco/MAVL_proposals/coco_props/class_specific # change to your path
+  PIS_PROP_PATH: /22liushoulong/projects/object-centric-ovd/datasets/MAVL_proposals/coco_props/class_specific # change to your path
   ROI_BOX_HEAD:
     USE_DDPM: True
     WS_NUM_PROPS: 32

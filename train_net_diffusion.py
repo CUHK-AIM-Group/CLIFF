@@ -211,7 +211,10 @@ def setup(args):
         # if os.path.exists(backup_dir):
         #     shutil.rmtree(backup_dir)
         # shutil.copytree('/home/wuyangli2/code/object-centric-ovd/ovd/modeling/roi_heads/', backup_dir)
-        
+    cfg.MODEL.ROI_HEADS.NUM_CLASSES = 228
+    cfg.MODEL.RETINANET.NUM_CLASSES = 228
+    cfg.SOLVER.CHECKPOINT_PERIOD = 10000
+    cfg.SOLVER.MAX_ITER = 250000
     cfg.freeze()
     default_setup(cfg, args)
     setup_logger(output=cfg.OUTPUT_DIR, distributed_rank=comm.get_rank(), name="ovd")

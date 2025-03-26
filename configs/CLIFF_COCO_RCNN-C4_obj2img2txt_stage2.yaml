@@ -14,9 +14,9 @@ DDPM:
   WITH_COND_NOISE: True
   WITH_OVER_SAMPLING: False
 MODEL:
-  WEIGHTS: "/data/wyli/code/CLIFF/output/cliff/stage1/model_final.pth"
-  RKD_FEAT_PATH: /data/wyli/data/coco/MAVL_proposals/coco_props/classagnostic_distilfeats # change to your path
-  PIS_PROP_PATH: /data/wyli/data/coco/MAVL_proposals/coco_props/class_specific # change to your path
+#  WEIGHTS: "/22liushoulong/projects/CLIFF/output/cliff/stage1/model_0059999.pth"
+  RKD_FEAT_PATH: /22liushoulong/datasets/MAVL_proposals/coco_props/classagnostic_distilfeats # change to your path
+  PIS_PROP_PATH: /22liushoulong/datasets/MAVL_proposals/coco_props/class_specific # change to your path
   DISTILLATION: True
   NUM_DISTIL_PROP: 5
   ROI_BOX_HEAD:

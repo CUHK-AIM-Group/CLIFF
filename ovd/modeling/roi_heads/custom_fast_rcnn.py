@@ -279,6 +279,13 @@ class CustomFastRCNNOutputLayers(FastRCNNOutputLayers):
                 loss += score.new_zeros([1])[0]
                 continue
             for i_l, label in enumerate(labels):
+                label_found = False
+                for i in p.target_proposals:
+                    if label == i[0]:
+                        label_found = True
+                        break
+                if not label_found:
+                    continue
                 if self.image_label_loss == 'pseudo_max_score':
                     loss_i, ind = self._psuedo_maxscore_loss(score, label, p)
                 else:

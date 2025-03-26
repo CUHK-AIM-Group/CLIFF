@@ -3,76 +3,10 @@ from detectron2.data.datasets.register_coco import register_coco_instances
 from detectron2.data.datasets.builtin_meta import _get_builtin_metadata
 from .lvis_v1 import custom_register_lvis_instances
 
-categories_seen = [
-    {'id': 1, 'name': 'person'},
-    {'id': 2, 'name': 'bicycle'},
-    {'id': 3, 'name': 'car'},
-    {'id': 4, 'name': 'motorcycle'},
-    {'id': 7, 'name': 'train'},
-    {'id': 8, 'name': 'truck'},
-    {'id': 9, 'name': 'boat'},
-    {'id': 15, 'name': 'bench'},
-    {'id': 16, 'name': 'bird'},
-    {'id': 19, 'name': 'horse'},
-    {'id': 20, 'name': 'sheep'},
-    {'id': 23, 'name': 'bear'},
-    {'id': 24, 'name': 'zebra'},
-    {'id': 25, 'name': 'giraffe'},
-    {'id': 27, 'name': 'backpack'},
-    {'id': 31, 'name': 'handbag'},
-    {'id': 33, 'name': 'suitcase'},
-    {'id': 34, 'name': 'frisbee'},
-    {'id': 35, 'name': 'skis'},
-    {'id': 38, 'name': 'kite'},
-    {'id': 42, 'name': 'surfboard'},
-    {'id': 44, 'name': 'bottle'},
-    {'id': 48, 'name': 'fork'},
-    {'id': 50, 'name': 'spoon'},
-    {'id': 51, 'name': 'bowl'},
-    {'id': 52, 'name': 'banana'},
-    {'id': 53, 'name': 'apple'},
-    {'id': 54, 'name': 'sandwich'},
-    {'id': 55, 'name': 'orange'},
-    {'id': 56, 'name': 'broccoli'},
-    {'id': 57, 'name': 'carrot'},
-    {'id': 59, 'name': 'pizza'},
-    {'id': 60, 'name': 'donut'},
-    {'id': 62, 'name': 'chair'},
-    {'id': 65, 'name': 'bed'},
-    {'id': 70, 'name': 'toilet'},
-    {'id': 72, 'name': 'tv'},
-    {'id': 73, 'name': 'laptop'},
-    {'id': 74, 'name': 'mouse'},
-    {'id': 75, 'name': 'remote'},
-    {'id': 78, 'name': 'microwave'},
-    {'id': 79, 'name': 'oven'},
-    {'id': 80, 'name': 'toaster'},
-    {'id': 82, 'name': 'refrigerator'},
-    {'id': 84, 'name': 'book'},
-    {'id': 85, 'name': 'clock'},
-    {'id': 86, 'name': 'vase'},
-    {'id': 90, 'name': 'toothbrush'},
-]
+categories_seen = [{'id': 1, 'name': 'chinese sauerkraut'}, {'id': 4, 'name': 'sweet and sour pork tenderloin'}, {'id': 7, 'name': 'zucchini and soybean soup'}, {'id': 8, 'name': 'diced chicken with green pepper'}, {'id': 10, 'name': 'celery fried meat'}, {'id': 11, 'name': 'pumpkin puree'}, {'id': 12, 'name': 'pickled vegetable/kimchi'}, {'id': 13, 'name': 'chinese cabbage and tofu'}, {'id': 14, 'name': 'egg dumpling'}, {'id': 15, 'name': 'fried shrimp with corn'}, {'id': 16, 'name': 'sauerkraut '}, {'id': 17, 'name': 'fried ham'}, {'id': 18, 'name': 'fried beef with green pepper'}, {'id': 20, 'name': 'jellied bean curd'}, {'id': 21, 'name': 'braised ribbonfish in brown sauce'}, {'id': 22, 'name': 'meatballs'}, {'id': 23, 'name': 'braised drumstick with sauce'}, {'id': 25, 'name': 'spaghetti with meat sauce'}, {'id': 26, 'name': 'smoked fish'}, {'id': 27, 'name': 'pickles squid'}, {'id': 28, 'name': 'pork with green pepper'}, {'id': 30, 'name': 'fried beans with potatoes'}, {'id': 31, 'name': 'stir fried shredded potato'}, {'id': 32, 'name': 'pickled radish'}, {'id': 33, 'name': 'ham pizza'}, {'id': 34, 'name': 'purple cabbage'}, {'id': 35, 'name': 'porridge'}, {'id': 36, 'name': 'mapo tofu'}, {'id': 37, 'name': 'braised okra with mushrooms'}, {'id': 40, 'name': 'fresh fruit salad'}, {'id': 41, 'name': 'fried lentils'}, {'id': 42, 'name': 'brown sugar cake'}, {'id': 43, 'name': 'fried pork slices with green pepper'}, {'id': 44, 'name': 'fried soybean sprouts with celery'}, {'id': 45, 'name': 'mushroom pizza'}, {'id': 46, 'name': 'bean curd'}, {'id': 47, 'name': 'fried pork livers'}, {'id': 48, 'name': 'fried eggplant'}, {'id': 49, 'name': 'lettuce fried meat'}, {'id': 50, 'name': 'vinegar vermicelli'}, {'id': 51, 'name': 'stewed tofu with green pepper'}, {'id': 53, 'name': 'fried flammulina velutipes with cauliflower'}, {'id': 54, 'name': 'steak'}, {'id': 55, 'name': 'cabbage vermicelli'}, {'id': 56, 'name': 'pork bun'}, {'id': 57, 'name': 'milk'}, {'id': 59, 'name': 'roast duck meat'}, {'id': 64, 'name': 'sweet and sour chicken breast'}, {'id': 65, 'name': 'onions scrambled eggs'}, {'id': 66, 'name': 'sour and spicy shredded potatoes'}, {'id': 68, 'name': 'roast meat with mushrooms'}, {'id': 69, 'name': 'potatoes'}, {'id': 71, 'name': 'stir fried seasonal vegetables'}, {'id': 72, 'name': 'plum peanuts'}, {'id': 74, 'name': 'fried mushroom slices'}, {'id': 75, 'name': 'air-dried beef'}, {'id': 76, 'name': 'steamed buns'}, {'id': 77, 'name': 'kungpao chicken'}, {'id': 79, 'name': 'seafood noodles'}, {'id': 80, 'name': 'egg'}, {'id': 81, 'name': 'tofu with preserved eggs'}, {'id': 83, 'name': 'boiled cauliflower'}, {'id': 85, 'name': 'crab paste'}, {'id': 86, 'name': 'egg cake'}, {'id': 88, 'name': 'steamed bread with quicksand and milk'}, {'id': 89, 'name': 'bean sprouts'}, {'id': 90, 'name': 'home-style sauteed tofu'}, {'id': 92, 'name': 'the fungus fried meat'}, {'id': 93, 'name': 'saute spicy chicken'}, {'id': 94, 'name': 'braised potato in brown sauce'}, {'id': 95, 'name': 'traditional chinese rice-pudding'}, {'id': 96, 'name': 'sausages with potatoes'}, {'id': 97, 'name': 'fried beans'}, {'id': 98, 'name': 'fried glutinous rice balls with sesame'}, {'id': 100, 'name': 'stewed seafood'}, {'id': 101, 'name': 'fried mushroom with green beans'}, {'id': 102, 'name': 'fried green pepper with potato'}, {'id': 104, 'name': 'fried dumplings'}, {'id': 105, 'name': 'marinated chicken feets'}, {'id': 106, 'name': 'sausages'}, {'id': 107, 'name': 'preserved vegetable roast meat'}, {'id': 108, 'name': 'fried chicken with green beans'}, {'id': 109, 'name': 'sauteed bean sprouts'}, {'id': 111, 'name': 'chinese cabbage'}, {'id': 112, 'name': 'sugared tomato'}, {'id': 113, 'name': 'ice tea'}, {'id': 114, 'name': 'pork chop'}, {'id': 116, 'name': 'stir-fried noodles'}, {'id': 117, 'name': 'pickled green bean'}, {'id': 118, 'name': 'taiwan rice roll'}, {'id': 119, 'name': 'braised flammulina velutipes'}, {'id': 120, 'name': 'peanuts'}, {'id': 121, 'name': 'stir fried soybeans with pickles'}, {'id': 122, 'name': 'fried chicken drumsticks'}, {'id': 123, 'name': 'french fries'}, {'id': 124, 'name': 'filet steak'}, {'id': 125, 'name': 'cauliflower'}, {'id': 126, 'name': 'rice wine soup'}, {'id': 127, 'name': 'steamed white crab'}, {'id': 128, 'name': 'banana milk cake'}, {'id': 129, 'name': 'scrambled eggs with tomatoes'}, {'id': 130, 'name': 'pineapple pizza'}, {'id': 131, 'name': 'shredded pork with garlic sauce'}, {'id': 132, 'name': 'rice'}, {'id': 134, 'name': 'fried crucian carp'}, {'id': 135, 'name': 'fruit pizza'}, {'id': 136, 'name': 'fried sole fish'}, {'id': 137, 'name': 'tomato soup'}, {'id': 138, 'name': 'steamed egg'}, {'id': 139, 'name': 'black rice porridge'}, {'id': 140, 'name': 'spicy duck'}, {'id': 141, 'name': 'mixed mungbean sprouts'}, {'id': 142, 'name': 'moon cake'}, {'id': 143, 'name': 'pumpkin pie'}, {'id': 144, 'name': 'onion rings'}, {'id': 145, 'name': 'japanese tofu'}, {'id': 146, 'name': 'fried zucchini'}, {'id': 147, 'name': 'roast beef with onion'}, {'id': 148, 'name': 'banana'}, {'id': 150, 'name': 'steamed whole grains'}, {'id': 151, 'name': 'peanut milk'}, {'id': 152, 'name': 'corn'}, {'id': 153, 'name': 'fried shrimp'}, {'id': 154, 'name': 'boiled eggs'}, {'id': 155, 'name': 'seaweed salad'}, {'id': 156, 'name': 'roast chicken wings'}, {'id': 157, 'name': 'salad'}, {'id': 160, 'name': 'sausage'}, {'id': 161, 'name': 'dough sticks(half)'}, {'id': 163, 'name': 'shredded chicken soup'}, {'id': 165, 'name': 'braised eggplant in brown sauce'}, {'id': 166, 'name': 'braised spareribs'}, {'id': 168, 'name': 'beef jerky rice'}, {'id': 170, 'name': 'roasted pork ribs'}, {'id': 171, 'name': 'tomatoes'}, {'id': 172, 'name': 'steamed chicken with chili sauce'}, {'id': 174, 'name': 'garlic bread '}, {'id': 175, 'name': 'special chicken nuggets'}, {'id': 176, 'name': 'steamed yellow croakers'}, {'id': 177, 'name': 'classic pizza'}, {'id': 178, 'name': 'beer duck'}, {'id': 179, 'name': 'lotus-root slices'}, {'id': 180, 'name': 'potato beef'}, {'id': 181, 'name': 'marinated cold cucumber'}, {'id': 182, 'name': 'onion roasted loin'}, {'id': 184, 'name': 'fried potatoes'}, {'id': 185, 'name': 'sweet potato lele'}, {'id': 186, 'name': 'grilled shrimp'}, {'id': 187, 'name': 'fried chicken cutlet'}, {'id': 188, 'name': 'filet mignon pasta'}, {'id': 189, 'name': 'fried cauliflower with carrot'}, {'id': 190, 'name': 'zucchini'}, {'id': 191, 'name': 'corn buns'}, {'id': 192, 'name': "grandma's pickled mustard"}, {'id': 194, 'name': 'coconut shake'}, {'id': 195, 'name': 'cold cucumber'}, {'id': 196, 'name': 'fried squid with pickled cabagges'}, {'id': 197, 'name': 'fried gourd'}, {'id': 198, 'name': 'fried chicken wing root'}, {'id': 199, 'name': 'cold beans'}, {'id': 200, 'name': 'duck leg'}, {'id': 202, 'name': 'chongqing style boiled blood curd'}, {'id': 203, 'name': 'cold tofu'}, {'id': 204, 'name': 'pumpkin congee'}, {'id': 205, 'name': 'steamed pork dumplings'}, {'id': 206, 'name': 'soybean milk'}, {'id': 207, 'name': 'cooked shrimp'}, {'id': 208, 'name': 'braised pork in brown sauce'}, {'id': 209, 'name': 'fried okra'}, {'id': 210, 'name': 'salad with mushroom'}, {'id': 211, 'name': 'fried string beans'}, {'id': 212, 'name': 'thousand-leaf tofu'}, {'id': 214, 'name': 'cabbage rice noodles'}, {'id': 215, 'name': 'boiled fish with pickled cabbage and chili'}, {'id': 216, 'name': 'steamed egg with minced meat'}, {'id': 217, 'name': 'shredded cabbage'}, {'id': 218, 'name': 'gluten'}, {'id': 219, 'name': 'homemade yuba'}, {'id': 221, 'name': 'red jujube pumpkin'}, {'id': 222, 'name': 'egg tart'}, {'id': 223, 'name': 'fried lettuce'}, {'id': 224, 'name': 'sweet and sour chicken nuggets'}, {'id': 225, 'name': 'fried eggs with beans'}, {'id': 228, 'name': 'fried chicken gizzard'}]
 
-categories_unseen = [
-    {'id': 5, 'name': 'airplane'},
-    {'id': 6, 'name': 'bus'},
-    {'id': 17, 'name': 'cat'},
-    {'id': 18, 'name': 'dog'},
-    {'id': 21, 'name': 'cow'},
-    {'id': 22, 'name': 'elephant'},
-    {'id': 28, 'name': 'umbrella'},
-    {'id': 32, 'name': 'tie'},
-    {'id': 36, 'name': 'snowboard'},
-    {'id': 41, 'name': 'skateboard'},
-    {'id': 47, 'name': 'cup'},
-    {'id': 49, 'name': 'knife'},
-    {'id': 61, 'name': 'cake'},
-    {'id': 63, 'name': 'couch'},
-    {'id': 76, 'name': 'keyboard'},
-    {'id': 81, 'name': 'sink'},
-    {'id': 87, 'name': 'scissors'},
-]
+categories_unseen = [{'id': 2, 'name': 'fried rice'}, {'id': 3, 'name': 'egg & vegetable soup'}, {'id': 5, 'name': 'breakfast rolls'}, {'id': 6, 'name': 'congee'}, {'id': 9, 'name': 'wonton'}, {'id': 19, 'name': 'roasted duck'}, {'id': 24, 'name': 'crispy cod stick'}, {'id': 29, 'name': 'grilled duck'}, {'id': 38, 'name': 'steamed bread with brown sugar'}, {'id': 39, 'name': 'baozi stuffed with red bean paste'}, {'id': 52, 'name': 'mizone sports beverage'}, {'id': 58, 'name': 'chinese cabbage and vermicelli'}, {'id': 60, 'name': 'egg cakes'}, {'id': 61, 'name': 'seaweed and egg soup'}, {'id': 62, 'name': 'chicken with pepper'}, {'id': 63, 'name': 'fried chicken wings'}, {'id': 67, 'name': 'dry-pot potato chips'}, {'id': 70, 'name': 'egg soup'}, {'id': 73, 'name': 'noodle'}, {'id': 78, 'name': 'seaweed soup'}, {'id': 82, 'name': 'spring onion rolls'}, {'id': 84, 'name': 'large meatball'}, {'id': 87, 'name': 'fried cauliflower'}, {'id': 91, 'name': 'sauteed shrimps'}, {'id': 99, 'name': 'millet congee'}, {'id': 103, 'name': 'vegetable bag'}, {'id': 110, 'name': 'celery tofu'}, {'id': 115, 'name': 'roast chicken'}, {'id': 133, 'name': 'marinated beef'}, {'id': 149, 'name': 'green vegetables and mushrooms'}, {'id': 158, 'name': 'fried mushrooms'}, {'id': 159, 'name': 'fried potato slices'}, {'id': 162, 'name': 'seafood rice'}, {'id': 164, 'name': 'cold mixed vermicelli'}, {'id': 167, 'name': 'chicken blocks'}, {'id': 169, 'name': 'stewed noodles'}, {'id': 173, 'name': 'orleans chicken wings'}, {'id': 183, 'name': 'noodles with chicken sauce'}, {'id': 193, 'name': 'supreme pizza'}, {'id': 201, 'name': 'sweet and sour pork ribs'}, {'id': 213, 'name': 'noodles with scallion oil'}, {'id': 220, 'name': 'apple'}, {'id': 226, 'name': 'popcorn chicken'}, {'id': 227, 'name': 'boiled cabbage'}]
+
 
 def _get_metadata(cat):
     if cat == 'all':
@@ -90,17 +24,17 @@ def _get_metadata(cat):
         "thing_dataset_id_to_contiguous_id": thing_dataset_id_to_contiguous_id,
         "thing_classes": thing_classes}
 
-_root = '/data/wyli/data/' # change to your path
+_root = '/22liushoulong/datasets/' # change to your path
 
 _PREDEFINED_SPLITS_COCO = {
-    "coco_zeroshot_train": ("coco/train2017", "coco/zero-shot/instances_train2017_seen_2.json", 'seen'),
-    "coco_zeroshot_val": ("coco/val2017", "coco/zero-shot/instances_val2017_unseen_2.json", 'unseen'),
-    "coco_not_zeroshot_val": ("coco/val2017", "coco/zero-shot/instances_val2017_seen_2.json", 'seen'),
-    "coco_generalized_zeroshot_val": ("coco/val2017", "coco/zero-shot/instances_val2017_all_2_oriorder.json", 'all'),
+    "coco_zeroshot_train": ("ZSFooD2/train2017", "ZSFooD2/zero-shot/instances_train2017_seen_2.json", 'seen'),
+    "coco_zeroshot_val": ("ZSFooD2/val2017", "ZSFooD2/zero-shot/instances_val2017_unseen_2.json", 'unseen'),
+    "coco_not_zeroshot_val": ("ZSFooD2/val2017", "ZSFooD2/zero-shot/instances_val2017_seen_2.json", 'seen'),
+    "coco_generalized_zeroshot_val": ("ZSFooD2/val2017", "ZSFooD2/zero-shot/instances_val2017_all_2_oriorder.json", 'all'),
     "coco_zeroshot_train_oriorder": (
-        "coco/train2017", "coco/zero-shot/instances_train2017_seen_2_oriorder.json", 'all'),
-    "coco_test": ("coco/val2017", "coco/annotations/instances_val2017.json", 'all'),
-    "coco_train": ("coco/train2017", "coco/annotations/instances_train2017.json", 'all'),
+        "ZSFooD2/train2017", "ZSFooD2/zero-shot/instances_train2017_seen_2_oriorder.json", 'all'),
+    "coco_test": ("ZSFooD2/val2017", "ZSFooD2/annotations/instances_val2017.json", 'all'),
+    "coco_train": ("ZSFooD2/train2017", "ZSFooD2/annotations/instances_train2017.json", 'all'),
 }
 
 for key, (image_root, json_file, cat) in _PREDEFINED_SPLITS_COCO.items():
@@ -112,8 +46,8 @@ for key, (image_root, json_file, cat) in _PREDEFINED_SPLITS_COCO.items():
     )
 
 _CUSTOM_SPLITS_COCO = {
-    "coco_caption_train_tags": ("coco/train2017/", "coco/annotations/captions_train2017_tags_allcaps_pis.json"),
-    "coco_caption_val_tags": ("coco/val2017/", "coco/annotations/captions_val2017_tags_allcaps.json"), }
+    "coco_caption_train_tags": ("ZSFooD2/train2017/", "ZSFooD2/annotations/captions_train2017_tags_allcaps_pis.json"),
+    "coco_caption_val_tags": ("ZSFooD2/val2017/", "ZSFooD2/annotations/captions_val2017_tags_allcaps.json"), }
 
 for key, (image_root, json_file) in _CUSTOM_SPLITS_COCO.items():
     custom_register_lvis_instances(

@@ -192,6 +192,7 @@ class CustomDatasetMapperMix(DatasetMapper):
             proposal_file = f'{self.pis_proposal_path}/{image_name}.pkl'
             with open(proposal_file, "rb") as f:
                 detections = pickle.load(f)
+                detections = {k: v for k, v in detections.items() if len(v[0]) > 0 and len(v[1]) > 0}
             target_keys = detections.keys()
             boxes = []
             probas = []
@@ -202,7 +203,10 @@ class CustomDatasetMapperMix(DatasetMapper):
                 box = transforms.apply_box(np.array([box[0]]))[0].clip(min=0).tolist()
                 box = np.minimum(box, list(image_shape + image_shape)[::-1])
                 boxes.append(box)
-                probas.append(prob[0])
+                if len(prob) == 0:
+                    probas.append(0)
+                else:
+                    probas.append(prob[0])
                 # create new dict of mutated label ids
                 new_key = "salient" if k == "salient" else catid2contid[k]
                 oredered_detections[new_key] = box, prob

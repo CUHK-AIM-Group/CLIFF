@@ -15,7 +15,10 @@ def get_frequency_distr(class_ids):
     common_categories = []
     rare_categories = []
     for name in class_ids:
-        frequency = category_instance_frequency[name]
+        if name not in category_instance_frequency:
+            frequency = 0
+        else:
+            frequency = category_instance_frequency[name]
         if frequency > frequent_thresh: frequent_categores.append(name)
         if common_thresh < frequency <= frequent_thresh: common_categories.append(name)
         if frequency <= common_thresh: rare_categories.append(name)
@@ -71,10 +74,10 @@ class CustomCOCOEvaluator(COCOEvaluator):
             results_unseen_frequent = []
             results_unseen_rare = []
             seen_frequent_categories, seen_common_categories, seen_rare_categories = get_frequency_distr(seen_names)
-            assert (len(seen_frequent_categories) + len(seen_common_categories) + len(seen_rare_categories)) == 48
+            assert (len(seen_frequent_categories) + len(seen_common_categories) + len(seen_rare_categories)) == 184
             unseen_frequent_categories, unseen_common_categories, unseen_rare_categories = get_frequency_distr(
                 unseen_names)
-            assert (len(unseen_frequent_categories) + len(unseen_common_categories) + len(unseen_rare_categories)) == 17
+            assert (len(unseen_frequent_categories) + len(unseen_common_categories) + len(unseen_rare_categories)) == 44
         for idx, name in enumerate(class_names):
             # area range index 0: all area ranges
             # max dets index -1: typically 100 per image
@@ -134,15 +137,15 @@ class CustomCOCOEvaluator(COCOEvaluator):
                 sum(results_per_category50_unseen) / len(results_per_category50_unseen),
             ))
         # frequent, common, rare: seen
-        seen_frequent = sum(results_seen_frequent) / len(results_seen_frequent)
-        seen_common = sum(results_seen_common) / len(results_seen_common)
-        seen_rare = sum(results_seen_rare) / len(results_seen_rare)
+        seen_frequent = sum(results_seen_frequent) / len(results_seen_frequent) if len(results_seen_frequent) > 0 else 0
+        seen_common = sum(results_seen_common) / len(results_seen_common) if len(results_seen_common) > 0 else 0
+        seen_rare = sum(results_seen_rare) / len(results_seen_rare) if len(results_seen_rare) > 0 else 0
         self._logger.info("Seen: freq: {}, common {}, rare {}".format(seen_frequent, seen_common, seen_rare))
 
         # frequent, common, rare : unseen
-        unseen_frequent = sum(results_unseen_frequent) / len(results_unseen_frequent)
-        unseen_common = sum(results_unseen_common) / len(results_unseen_common)
-        unseen_rare = sum(results_unseen_rare) / len(results_unseen_rare)
+        unseen_frequent = sum(results_unseen_frequent) / len(results_unseen_frequent) if len(results_unseen_frequent) > 0 else 0
+        unseen_common = sum(results_unseen_common) / len(results_unseen_common) if len(results_unseen_common) > 0 else 0
+        unseen_rare = sum(results_unseen_rare) / len(results_unseen_rare) if len(results_unseen_rare) > 0 else 0
         self._logger.info("Unseen: freq: {}, common {}, rare {}".format(unseen_frequent, unseen_common, unseen_rare))
 
         results.update({"AP-" + name: ap for name, ap in results_per_category})
